@@ -31,6 +31,11 @@ pub struct SpawnPlan {
     pub args: Vec<String>,
     pub cwd: PathBuf,
     pub env: BTreeMap<String, String>,
+    /// Environment variables to *remove* from the inherited environment.
+    /// Proton's launcher script is Python; the AppImage exports
+    /// `PYTHONHOME`/`PYTHONPATH` pointing at its bundled Python, which makes
+    /// that script die instantly (`No module named 'encodings'`).
+    pub env_remove: Vec<String>,
 }
 
 fn is_executable(path: &Path) -> bool {
@@ -251,6 +256,18 @@ pub fn build_spawn_plan(
     }
 
     // GameMode wraps the whole command line; off-when-unavailable is expected.
+    let mut env_remove: Vec<String> = Vec::new();
+    // Proton's entry point is a Python script; any inherited PYTHONHOME /
+    // PYTHONPATH (e.g. from the AppImage's bundled Python) breaks it at once.
+    let plan_is_proton = program.ends_with("proton")
+        || args.first().map(|a| a.ends_with("proton")).unwrap_or(false);
+    if plan_is_proton {
+        env_remove.extend(
+            ["PYTHONHOME", "PYTHONPATH", "PYTHONSTARTUP", "PYTHONUSERBASE"]
+                .iter()
+                .map(|k| k.to_string()),
+        );
+    }
     let plan = if extras.game_mode
         && program.file_name() != Some("gamemoderun".as_ref())
         && on_path("gamemoderun")
@@ -262,6 +279,7 @@ pub fn build_spawn_plan(
             args: wrapped,
             cwd,
             env,
+            env_remove,
         }
     } else {
         SpawnPlan {
@@ -269,6 +287,7 @@ pub fn build_spawn_plan(
             args,
             cwd,
             env,
+            env_remove,
         }
     };
 
@@ -562,6 +581,9 @@ pub fn spawn(plan: &SpawnPlan, session_log: Option<std::path::PathBuf>) -> AppRe
     }
     for (key, value) in &plan.env {
         command.env(key, value);
+    }
+    for key in &plan.env_remove {
+        command.env_remove(key);
     }
     command.spawn().map_err(|err| {
         AppError::launch_failed(format!("failed to start {}: {err}", plan.program.display()))
