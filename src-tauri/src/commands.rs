@@ -380,7 +380,10 @@ pub async fn launch_game(app: AppHandle, id: i64) -> AppResult<LaunchInfo> {
         crate::tray::hide_main_window(&app);
     }
 
-    let child = match launch::spawn(&plan) {
+    let child = match launch::spawn(
+        &plan,
+        crate::paths::logs_dir().ok().map(|dir| launch::session_log_path(&dir, session.id)),
+    ) {
         Ok(child) => child,
         Err(err) => {
             // Roll back the session so a failed start leaves no phantom entry.

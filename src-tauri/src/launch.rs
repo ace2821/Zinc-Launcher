@@ -514,17 +514,52 @@ fn ensure_prefix_dir(env: &BTreeMap<String, String>) -> AppResult<()> {
     Ok(())
 }
 
+/// `<dataDir>/logs/session-<id>.log`. Child stdout+stderr are teed here so a
+/// game that dies right after launch leaves evidence.
+pub fn session_log_path(logs_dir: &std::path::Path, session_id: i64) -> std::path::PathBuf {
+    logs_dir.join(format!("session-{session_id}.log"))
+}
+
 /// Start the process described by `plan`. The child is detached from our
 /// stdio so it can outlive the launcher window.
-pub fn spawn(plan: &SpawnPlan) -> AppResult<Child> {
+pub fn spawn(plan: &SpawnPlan, session_log: Option<std::path::PathBuf>) -> AppResult<Child> {
     ensure_prefix_dir(&plan.env)?;
+    tracing::info!(
+        "launching {} {} (cwd {})",
+        plan.program.display(),
+        plan.args.join(" "),
+        plan.cwd.display()
+    );
     let mut command = Command::new(&plan.program);
     command
         .args(&plan.args)
         .current_dir(&plan.cwd)
-        .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null());
+        .stdin(Stdio::null());
+    let log = match session_log.map(|path| {
+        std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(path)
+    }) {
+        Some(Ok(log)) => Some(log),
+        Some(Err(err)) => {
+            tracing::warn!("no session log: {err}");
+            None
+        }
+        None => None,
+    };
+    match log {
+        Some(log) => {
+            let stdout = log
+                .try_clone()
+                .map_err(|err| AppError::io(format!("session log clone failed: {err}")))?;
+            command.stdout(Stdio::from(stdout)).stderr(Stdio::from(log));
+        }
+        None => {
+            command.stdout(Stdio::null()).stderr(Stdio::null());
+        }
+    }
     for (key, value) in &plan.env {
         command.env(key, value);
     }
