@@ -413,6 +413,12 @@ export const pl: TranslationShape = {
     runtimeDownloadSuccess: "{{name}} zainstalowany",
     runtimeDownloadFailed: "Pobieranie nie powiodło się",
     runtimeDownloadInstalled: "Runtime zainstalowany",
+    runtimeDownloadWineGe: "Pobierz Wine-GE",
+    runtimeDownloadProtonGe: "Pobierz Proton-GE",
+    runtimeDownloadProtonExperimental: "Proton Experimental (wymaga Steam)",
+    runtimeDownloading: "Pobieranie…",
+    runtimeDownloadRefreshing: "Pobrano, odświeżam listę…",
+    runtimeDownloadError: "Pobieranie nie powiodło się",
   },
 
   onboarding: {

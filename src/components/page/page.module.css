@@ -113,3 +113,18 @@
 .numberField {
   max-width: 168px;
 }
+
+/* Empty runtime list: hint plus the download action buttons. */
+.runtimesEmpty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  align-items: flex-start;
+}
+
+.downloadButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  width: 100%;
+}

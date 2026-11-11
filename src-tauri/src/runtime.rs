@@ -179,6 +179,10 @@ pub fn scan_roots(roots: &[PathBuf]) -> Vec<RuntimeInfo> {
 }
 
 /// The runtime roots the launcher looks at. Missing roots are simply skipped.
+///
+/// `steamapps/common` is where the Steam client installs its own builds
+/// (`Proton - Experimental`, `Proton 9.0`, …), so it has to be scanned even
+/// though it is not a compatibility-tool folder.
 pub fn default_roots() -> Vec<PathBuf> {
     let Some(home) = dirs::home_dir() else {
         return Vec::new();
@@ -186,6 +190,8 @@ pub fn default_roots() -> Vec<PathBuf> {
     vec![
         home.join(".local/share/Steam/compatibilitytools.d"),
         home.join(".steam/steam/compatibilitytools.d"),
+        home.join(".local/share/Steam/steamapps/common"),
+        home.join(".steam/steam/steamapps/common"),
         home.join(".local/share/lutris/runners/wine"),
         home.join("Games/runners"),
     ]
@@ -199,18 +205,46 @@ pub fn scan_runtimes() -> Vec<RuntimeInfo> {
     scan_roots(&default_roots())
 }
 
+/// True when `dir` looks like a Steam client install. Proton only needs the
+/// directory to exist as `STEAM_COMPAT_CLIENT_INSTALL_PATH`; `clientui`/`bin`
+/// tell a real client apart from an empty leftover folder.
+fn is_steam_client(dir: &Path) -> bool {
+    dir.is_dir() && (dir.join("clientui").is_dir() || dir.join("bin").is_dir())
+}
+
+/// First existing Steam client among the two well-known locations
+/// (`~/.steam/steam` is usually a symlink to `~/.local/share/Steam`).
+fn detect_steam_client(home: &Path) -> Option<PathBuf> {
+    [home.join(".local/share/Steam"), home.join(".steam/steam")]
+        .into_iter()
+        .find(|candidate| is_steam_client(candidate))
+}
+
 /// Steam client install path used by Proton (`STEAM_COMPAT_CLIENT_INSTALL_PATH`).
+///
+/// When no client is found the launcher creates a minimal shim directory
+/// (`<dataDir>/steam-client/`). Most builds only use the path to locate Steam
+/// runtime libraries, so an empty directory keeps Proton working instead of
+/// failing the launch outright.
 pub fn steam_client_dir() -> Option<PathBuf> {
     let home = dirs::home_dir()?;
-    let primary = home.join(".local/share/Steam");
-    if primary.is_dir() {
-        return Some(primary);
+    if let Some(found) = detect_steam_client(&home) {
+        return Some(found);
     }
-    let secondary = home.join(".steam/steam");
-    if secondary.is_dir() {
-        return Some(secondary);
+    let shim = crate::paths::data_dir().ok()?.join("steam-client");
+    match std::fs::create_dir_all(&shim) {
+        Ok(()) => {
+            tracing::warn!(
+                "Steam client not found; using minimal shim at {} for STEAM_COMPAT_CLIENT_INSTALL_PATH",
+                shim.display()
+            );
+            Some(shim)
+        }
+        Err(err) => {
+            tracing::warn!("Steam client not found and shim could not be created: {err}");
+            None
+        }
     }
-    None
 }
 
 fn newest(runtimes: &[RuntimeInfo]) -> Option<RuntimeInfo> {
@@ -526,25 +560,48 @@ pub fn matches_installed(kind: RuntimeDownloadKind, runtimes: &[RuntimeInfo]) ->
 
 /// Latest downloadable build per kind (network). `installed` comes from a
 /// fresh [`scan_runtimes`] pass, so it covers launcher-managed installs too.
+///
+/// A failed lookup for one kind (offline, GitHub rate limit, removed release)
+/// becomes `downloadable: false` with a `reason` instead of failing the whole
+/// list, so the other kinds stay usable.
 pub fn available_downloads() -> AppResult<Vec<RuntimeAvailableDownload>> {
     let runtimes = scan_runtimes();
-    let proton = remote_asset_for(RuntimeDownloadKind::ProtonGe)?;
-    let wine = remote_asset_for(RuntimeDownloadKind::WineGe)?;
 
-    let entry = |kind: RuntimeDownloadKind, asset: RemoteAsset| RuntimeAvailableDownload {
-        kind,
-        name: asset.runtime_name.clone(),
-        version: version_from_name(&asset.runtime_name),
-        size_bytes: Some(asset.size),
-        url: Some(asset.url),
-        installed: matches_installed(kind, &runtimes),
-        downloadable: true,
-        reason: None,
+    let resolved = |kind: RuntimeDownloadKind, fallback: &str| -> RuntimeAvailableDownload {
+        match remote_asset_for(kind) {
+            Ok(asset) => RuntimeAvailableDownload {
+                kind,
+                name: asset.runtime_name.clone(),
+                version: version_from_name(&asset.runtime_name),
+                size_bytes: Some(asset.size),
+                url: Some(asset.url),
+                installed: matches_installed(kind, &runtimes),
+                downloadable: true,
+                reason: None,
+            },
+            Err(err) => {
+                tracing::warn!(
+                    "runtime release lookup for {} failed: {}",
+                    kind.as_str(),
+                    err.message
+                );
+                RuntimeAvailableDownload {
+                    kind,
+                    name: fallback.to_string(),
+                    version: None,
+                    size_bytes: None,
+                    url: None,
+                    installed: matches_installed(kind, &runtimes),
+                    downloadable: false,
+                    reason: Some("lookup-failed".to_string()),
+                }
+            }
+        }
     };
 
     Ok(vec![
-        entry(RuntimeDownloadKind::ProtonGe, proton),
-        entry(RuntimeDownloadKind::WineGe, wine),
+        resolved(RuntimeDownloadKind::ProtonGe, "Proton-GE"),
+        resolved(RuntimeDownloadKind::WineGe, "Wine-GE"),
         RuntimeAvailableDownload {
             kind: RuntimeDownloadKind::ProtonExperimental,
             name: "Proton Experimental".to_string(),
@@ -848,7 +905,9 @@ fn safe_symlink_target(entry_path: &Path, target: &Path) -> bool {
 
 /// Traversal-safe extraction of a tar stream into `destination`.
 fn extract_tar<R: Read>(reader: R, destination: &Path) -> AppResult<()> {
-    let mut archive = tar::Archive::new(reader);
+    // Decoders like `GzDecoder` may return short reads; the tar reader needs a
+    // buffered source to see complete headers.
+    let mut archive = tar::Archive::new(std::io::BufReader::new(reader));
     let entries = archive
         .entries()
         .map_err(|err| AppError::io(format!("runtime archive is corrupt: {err}")))?;
@@ -1131,6 +1190,41 @@ mod tests {
     }
 
     #[test]
+    fn steamapps_common_layout_yields_the_steam_proton_build() {
+        let dir = tempdir().unwrap();
+        let common = dir.path().join("steamapps/common");
+        proton_dir(&common, "Proton - Experimental");
+        proton_dir(&common, "Proton 9.0");
+        std::fs::create_dir_all(common.join("SteamLinuxRuntime_soldier")).unwrap();
+        std::fs::create_dir_all(common.join("SomeGame")).unwrap();
+
+        let found = scan_roots(&[common]);
+        assert_eq!(found.len(), 2);
+        let experimental =
+            select_proton_runtime(TranslationLayer::ProtonExperimental, None, &found).unwrap();
+        assert_eq!(experimental.name, "Proton - Experimental");
+    }
+
+    #[test]
+    fn steam_client_detection_accepts_clientui_or_bin() {
+        let dir = tempdir().unwrap();
+        let primary = dir.path().join(".local/share/Steam");
+        std::fs::create_dir_all(primary.join("clientui")).unwrap();
+        assert_eq!(detect_steam_client(dir.path()), Some(primary));
+
+        // `bin`-only installations count too.
+        let second = tempdir().unwrap();
+        let fallback = second.path().join(".steam/steam");
+        std::fs::create_dir_all(fallback.join("bin")).unwrap();
+        assert_eq!(detect_steam_client(second.path()), Some(fallback));
+
+        // A bare directory with neither marker is not a client.
+        let third = tempdir().unwrap();
+        std::fs::create_dir_all(third.path().join(".local/share/Steam")).unwrap();
+        assert_eq!(detect_steam_client(third.path()), None);
+    }
+
+    #[test]
     fn extract_tar_unpacks_a_normal_archive() {
         let dir = tempdir().unwrap();
         let destination = dir.path().join("runtime");
@@ -1148,5 +1242,48 @@ mod tests {
 
         extract_tar(std::io::Cursor::new(archive), &destination).unwrap();
         assert!(destination.join("GE-Proton9-20/proton").is_file());
+    }
+
+    fn tar_with_runtime() -> Vec<u8> {
+        let mut builder = tar::Builder::new(Vec::new());
+        let payload = b"#!/bin/sh\n";
+        let mut header = tar::Header::new_gnu();
+        header.set_size(payload.len() as u64);
+        header.set_mode(0o755);
+        header
+            .set_path("wine-lutris-GE-Proton8-26/bin/wine")
+            .unwrap();
+        header.set_cksum();
+        builder.append(&header, &payload[..]).unwrap();
+        builder.into_inner().unwrap()
+    }
+
+    #[test]
+    fn xz_and_gzip_archives_extract() {
+        use std::io::Write;
+
+        let dir = tempdir().unwrap();
+        let tar_bytes = tar_with_runtime();
+
+        // tar.xz (Wine-GE)
+        let xz_dir = dir.path().join("xz");
+        std::fs::create_dir_all(&xz_dir).unwrap();
+        let mut xz_encoder = liblzma::write::XzEncoder::new(Vec::new(), 6);
+        xz_encoder.write_all(&tar_bytes).unwrap();
+        let xz = xz_encoder.finish().unwrap();
+        let xz_decoder = liblzma::read::XzDecoder::new(std::io::Cursor::new(xz));
+        extract_tar(xz_decoder, &xz_dir).unwrap();
+        assert!(xz_dir.join("wine-lutris-GE-Proton8-26/bin/wine").is_file());
+
+        // tar.gz (Proton-GE)
+        let gz_dir = dir.path().join("gz");
+        std::fs::create_dir_all(&gz_dir).unwrap();
+        let mut gz_encoder =
+            flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+        gz_encoder.write_all(&tar_bytes).unwrap();
+        let gz = gz_encoder.finish().unwrap();
+        let gz_decoder = flate2::read::GzDecoder::new(std::io::Cursor::new(gz));
+        extract_tar(gz_decoder, &gz_dir).unwrap();
+        assert!(gz_dir.join("wine-lutris-GE-Proton8-26/bin/wine").is_file());
     }
 }

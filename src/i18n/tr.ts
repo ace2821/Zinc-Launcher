@@ -409,6 +409,12 @@ export const tr: TranslationShape = {
     runtimeDownloadSuccess: "{{name}} yüklendi",
     runtimeDownloadFailed: "İndirme başarısız",
     runtimeDownloadInstalled: "Runtime yüklendi",
+    runtimeDownloadWineGe: "Wine-GE'yi indir",
+    runtimeDownloadProtonGe: "Proton-GE'yi indir",
+    runtimeDownloadProtonExperimental: "Proton Experimental (Steam gerekiyor)",
+    runtimeDownloading: "İndiriliyor…",
+    runtimeDownloadRefreshing: "İndirildi, liste yenileniyor…",
+    runtimeDownloadError: "İndirme başarısız",
   },
 
   onboarding: {

@@ -409,6 +409,12 @@ export const de: TranslationShape = {
     runtimeDownloadSuccess: "{{name}} installiert",
     runtimeDownloadFailed: "Download fehlgeschlagen",
     runtimeDownloadInstalled: "Runtime installiert",
+    runtimeDownloadWineGe: "Wine-GE herunterladen",
+    runtimeDownloadProtonGe: "Proton-GE herunterladen",
+    runtimeDownloadProtonExperimental: "Proton Experimental (benötigt Steam)",
+    runtimeDownloading: "Wird heruntergeladen…",
+    runtimeDownloadRefreshing: "Heruntergeladen, Liste wird aktualisiert…",
+    runtimeDownloadError: "Download fehlgeschlagen",
   },
 
   onboarding: {

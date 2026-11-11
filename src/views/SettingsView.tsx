@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { Download } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { GlyphRow } from "../components/bigpicture/Glyph";
 import page from "../components/page/page.module.css";
 import { Badge } from "../components/ui/Badge";
+import { Button } from "../components/ui/Button";
 import {
   Segmented,
   SwitchField,
   TextField,
   type SegmentedOption,
 } from "../components/ui/Field";
-import { Skeleton } from "../components/ui/Feedback";
+import { ProgressBar, Skeleton } from "../components/ui/Feedback";
 import { api, isMock } from "../lib/api";
 import {
   ACCENT_IDS,
@@ -24,13 +26,16 @@ import { STORAGE_PATHS } from "../lib/paths";
 import type {
   BigPictureLayout,
   Language,
+  RuntimeDownloadFinishedEvent,
+  RuntimeDownloadKind,
+  RuntimeDownloadProgressEvent,
   RuntimeInfo,
   TranslationLayer,
 } from "../lib/types";
 import { useLibraryStore } from "../store/library";
 import { useShellStore, type LayoutMode } from "../store/shell";
 import { confirmDialog } from "../store/confirm";
-import { toastInfo } from "../store/toasts";
+import { toastError, toastInfo, toastSuccess } from "../store/toasts";
 import { RuntimeDownloadDialog } from "../components/ui/RuntimeDownloadDialog";
 
 /** The four face buttons, in the order a poster's controller paints them. */
@@ -207,10 +212,67 @@ export function SettingsView() {
     kind: string;
     name: string;
   } | null>(null);
+  const [downloadingKind, setDownloadingKind] = useState<RuntimeDownloadKind | null>(null);
+  const [downloadPercent, setDownloadPercent] = useState<number | null>(null);
+  const unlistenRef = useRef<(() => void)[]>([]);
+  const downloadKindRef = useRef<RuntimeDownloadKind | null>(null);
+
+  useEffect(() => {
+    downloadKindRef.current = downloadingKind;
+  }, [downloadingKind]);
 
   useEffect(() => {
     void api.listRuntimes().then(setRuntimes);
   }, []);
+
+  /** Subscribe to runtime-download events for the life of the view. */
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const offProgress = await api.on("runtime-download-progress", (payload: RuntimeDownloadProgressEvent) => {
+        if (payload.kind !== downloadKindRef.current) return;
+        if (payload.totalBytes && payload.totalBytes > 0) {
+          setDownloadPercent(Math.round((payload.downloadedBytes / payload.totalBytes) * 100));
+        }
+      });
+      const offFinished = await api.on("runtime-download-finished", (payload: RuntimeDownloadFinishedEvent) => {
+        if (payload.kind !== downloadKindRef.current) return;
+        setDownloadingKind(null);
+        setDownloadPercent(null);
+        if (payload.ok) {
+          void toastSuccess(
+            t("settings.runtimeDownloadFinished"),
+            t("settings.runtimeDownloadRefreshing"),
+          );
+          void api.listRuntimes().then(setRuntimes);
+        } else {
+          const msg = payload.error?.message ?? t("settings.runtimeDownloadFailed");
+          void toastError(t("settings.runtimeDownloadError"), undefined, msg);
+        }
+      });
+      if (!cancelled) {
+        unlistenRef.current = [offProgress, offFinished];
+      }
+    })();
+    return () => {
+      cancelled = true;
+      for (const off of unlistenRef.current) off();
+    };
+  }, []);
+
+  /** Kick off a runtime download and track its progress via events. */
+  const handleDownload = async (kind: RuntimeDownloadKind) => {
+    setDownloadingKind(kind);
+    setDownloadPercent(null);
+    try {
+      await api.runtimeDownload(kind);
+    } catch (error) {
+      setDownloadingKind(null);
+      setDownloadPercent(null);
+      const msg = error instanceof Error ? error.message : t("settings.runtimeDownloadFailed");
+      void toastError(t("settings.runtimeDownloadError"), undefined, msg);
+    }
+  };
 
   /** Runtime download API (added by the core in the same milestone). */
   const downloadsApi = api as unknown as {
@@ -247,6 +309,9 @@ export function SettingsView() {
 
   const isRuntimeLayer = (value: string) =>
     ["protonGe", "wineGe", "protonExperimental"].includes(value);
+
+  const hasWine = runtimes.some((runtime) => runtime.kind === "wine");
+  const hasProton = runtimes.some((runtime) => runtime.kind === "proton");
 
   const chooseCustomPath = async () => {
     const picked = await api.pickDirectory({
@@ -411,7 +476,7 @@ export function SettingsView() {
                       name="translation-runtime"
                       checked={settings.runtimeOverridePath === null}
                       onChange={() => void updateSettings({ runtimeOverridePath: "" })}
-                      disabled={saving}
+                      disabled={saving || downloadingKind !== null}
                     />
                     {t("settings.runtimeAuto")}
                   </label>
@@ -424,7 +489,7 @@ export function SettingsView() {
                         onChange={() =>
                           void updateSettings({ runtimeOverridePath: runtime.path })
                         }
-                        disabled={saving}
+                        disabled={saving || downloadingKind !== null}
                       />
                       {runtime.name}
                       {runtime.version ? ` (${runtime.version})` : null}
@@ -437,7 +502,53 @@ export function SettingsView() {
                   ))}
                 </div>
                 {runtimes.length === 0 && (
-                  <p className="sectionHint">{t("settings.runtimesEmpty")}</p>
+                  <div className={page.runtimesEmpty}>
+                    <p className="sectionHint">{t("settings.runtimesEmpty")}</p>
+                    {downloadingKind !== null && (
+                      <>
+                        <p className="sectionHint">{t("settings.runtimeDownloading")}</p>
+                        <ProgressBar
+                          value={downloadPercent}
+                          label={
+                            downloadingKind === "wineGe"
+                              ? t("settings.translationLayerWineGe")
+                              : downloadingKind === "protonGe"
+                                ? t("settings.translationLayerProtonGe")
+                                : t("settings.translationLayerProtonExperimental")
+                          }
+                        />
+                      </>
+                    )}
+                    <div className={page.downloadButtons}>
+                      {!hasWine && (
+                        <Button
+                          variant="primary"
+                          icon={Download}
+                          disabled={downloadingKind !== null}
+                          onClick={() => handleDownload("wineGe")}
+                        >
+                          {t("settings.runtimeDownloadWineGe")}
+                        </Button>
+                      )}
+                      {!hasProton && (
+                        <Button
+                          variant="primary"
+                          icon={Download}
+                          disabled={downloadingKind !== null}
+                          onClick={() => handleDownload("protonGe")}
+                        >
+                          {t("settings.runtimeDownloadProtonGe")}
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        disabled
+                        title={t("settings.runtimeDownloadProtonExperimentalHint")}
+                      >
+                        {t("settings.runtimeDownloadProtonExperimental")}
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </>
             )}

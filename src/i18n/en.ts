@@ -415,6 +415,12 @@ export const en = {
     runtimeDownloadSuccess: "{{name}} installed",
     runtimeDownloadFailed: "Download failed",
     runtimeDownloadInstalled: "Runtime installed",
+    runtimeDownloadWineGe: "Download Wine-GE",
+    runtimeDownloadProtonGe: "Download Proton-GE",
+    runtimeDownloadProtonExperimental: "Proton Experimental (requires Steam)",
+    runtimeDownloading: "Downloading…",
+    runtimeDownloadRefreshing: "Downloaded, refreshing list…",
+    runtimeDownloadError: "Download failed",
   },
 
   onboarding: {

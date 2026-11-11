@@ -409,6 +409,12 @@ export const fi: TranslationShape = {
     runtimeDownloadSuccess: "{{name}} asennettu",
     runtimeDownloadFailed: "Lataus epäonnistui",
     runtimeDownloadInstalled: "Runtime asennettu",
+    runtimeDownloadWineGe: "Lataa Wine-GE",
+    runtimeDownloadProtonGe: "Lataa Proton-GE",
+    runtimeDownloadProtonExperimental: "Proton Experimental (vaatii Steamin)",
+    runtimeDownloading: "Ladataan…",
+    runtimeDownloadRefreshing: "Ladattu, päivitetään listaa…",
+    runtimeDownloadError: "Lataus epäonnistui",
   },
 
   onboarding: {

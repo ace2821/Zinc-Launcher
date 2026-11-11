@@ -205,10 +205,13 @@ clears it).
 `list_runtimes` scans one level below these roots (missing roots are skipped,
 child names matched case-insensitively, results deduped by canonical path):
 `~/.local/share/Steam/compatibilitytools.d`, `~/.steam/steam/compatibilitytools.d`,
+`~/.local/share/Steam/steamapps/common`, `~/.steam/steam/steamapps/common`,
 `~/.local/share/lutris/runners/wine`, `~/Games/runners`,
 `<dataDir>/runtimes` (launcher-managed installs). A directory with an executable
 `proton` is `kind: "proton"` (checked first); otherwise `files/bin/wine` or
-`bin/wine` makes it `kind: "wine"`.
+`bin/wine` makes it `kind: "wine"`. Scanning `steamapps/common` is what makes a
+Steam-installed `Proton - Experimental` visible (and report `installed: true`)
+instead of asking the user to install it again.
 
 ### Runtime downloads
 
@@ -239,7 +242,9 @@ returns:
 
 `installed` matches scanned names by kind + flavor: `protonGe` = Proton with
 `GE`/`UMU`, `wineGe` = Wine with `GE`, `protonExperimental` = Proton with
-`experimental`.
+`experimental`. A failed release lookup for one kind does not fail the command:
+that row is returned with `downloadable: false` and `reason: "lookup-failed"`
+(offline, GitHub rate limit, removed asset); the other rows stay usable.
 
 `runtime_download { kind }` starts a background job and returns immediately.
 The archive streams to `<dataDir>/runtimes/downloads/`, is size-checked,
@@ -250,9 +255,12 @@ the same kind is rejected with `VALIDATION`; `runtime_cancel_download { kind }`
 aborts the active job and removes the partial archive. Both failure and
 cancellation end with `runtime-download-finished { ok: false, error }`.
 
-Proton launch environment: `STEAM_COMPAT_CLIENT_INSTALL_PATH` = an existing
-`~/.local/share/Steam` (fallback `~/.steam/steam`; absent → descriptive
-`LAUNCH_FAILED`), `STEAM_COMPAT_DATA_PATH` =
+Proton launch environment: `STEAM_COMPAT_CLIENT_INSTALL_PATH` = the first
+existing Steam client install (`~/.local/share/Steam`, fallback
+`~/.steam/steam`; a directory counts as a client when it contains `clientui/`
+or `bin/`). When neither exists the launcher creates a minimal shim at
+`<dataDir>/steam-client/`, logs a warning and uses it — most builds only need
+the path to exist. `STEAM_COMPAT_DATA_PATH` =
 `<dataDir>/prefixes/proton-<gameId>` (created during planning),
 `WINEPREFIX` = `<compatdata>/pfx`. The game's stored `env` (`WINEDLLOVERRIDES`,
 `MANGOHUD`, …) is preserved. Proton creates its own prefix on first run, so no
