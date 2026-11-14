@@ -3,8 +3,7 @@ import type { TranslationShape } from "./en";
 /** Russian strings. Typed as `TranslationShape`, so every `en.ts` key is required. */
 export const ru: TranslationShape = {
   app: {
-    name: "Zinc Launcher",
-    subtitle: "Локальная игровая библиотека",
+    name: "Zinc",
   },
 
   nav: {
@@ -98,14 +97,6 @@ export const ru: TranslationShape = {
     noResultsTitle: "Ничего не найдено",
     noResultsBody: "Ни одна запись в библиотеке не соответствует «{{query}}».",
     noResultsAction: "Очистить поиск",
-    showing: "Показано: {{count}} / {{total}}",
-    heroTitle: "Ваша библиотека",
-    heroBody: "Ваши игры в одном месте.",
-    recents: "Недавно играли",
-    recentsNone: "Пока ничего не запускали",
-    statTitles: "названий",
-    statPlaytime: "сыграно",
-    statWeek: "за неделю",
     playingNow: "Сейчас играете",
     favoriteAdd: "Добавить в избранное",
     favoriteRemove: "Убрать из избранного",
@@ -133,7 +124,7 @@ export const ru: TranslationShape = {
   import: {
     title: "Источники и импорт",
     description:
-      "Корни сканирования — папки, которые Zinc Launcher обходит в поисках папок игр. Ничего не добавляется в библиотеку без вашего одобрения.",
+      "Корни сканирования — папки, которые Zinc обходит в поисках папок игр. Ничего не добавляется в библиотеку без вашего одобрения.",
     sourcesTitle: "Корни сканирования",
     sourcesEmptyTitle: "Корней сканирования пока нет",
     sourcesEmpty:
@@ -361,13 +352,8 @@ export const ru: TranslationShape = {
     storageNote:
       "Папки обложек, сохранений и модов появятся со своими этапами; library.db и журналы сегодня лежат в папке данных.",
     aboutTitle: "О программе",
-    version: "Версия",
     license: "Лицензия",
     mode: "Режим IPC",
-    modeTauri: "Ядро Tauri",
-    modeMock: "Макет (в памяти)",
-    modeMockHint:
-      "Ядро Rust не подключено: каждое действие выполняется на адаптере в памяти, и ничего не пишется на диск.",
     onboardingTitle: "Экскурсия по настройке",
     onboardingDescription:
       "Язык, шрифт интерфейса, акцент, вид библиотеки по умолчанию и поведение окна во время игры. Каждый выбор сохраняется сразу, так что отправлять нечего.",
@@ -486,7 +472,7 @@ export const ru: TranslationShape = {
 
     back: "Назад",
     next: "Далее",
-    finish: "Начать работу с Zinc Launcher",
+    finish: "Начать работу с Zinc",
     skip: "Пропустить",
     skipHint: "Пропустить экскурсию и оставить значения по умолчанию.",
     footHint: "Ваши выборы сохраняются по ходу.",
@@ -519,7 +505,7 @@ export const ru: TranslationShape = {
     fileDialogTitle: "Выберите изображение обложки",
     fileFilter: "Изображения",
     fileNote:
-      "Изображение копируется в собственный каталог Zinc Launcher — выбранный файл остаётся на месте.",
+      "Изображение копируется в собственный каталог Zinc — выбранный файл остаётся на месте.",
     fileFailed: "Не удалось использовать это изображение",
     dialogTitle: "Обложка",
     searchLabel: "Поиск в магазине Steam",

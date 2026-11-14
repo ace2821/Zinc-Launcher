@@ -12,7 +12,7 @@ import {
   type SegmentedOption,
 } from "../components/ui/Field";
 import { ProgressBar, Skeleton } from "../components/ui/Feedback";
-import { api, isMock } from "../lib/api";
+import { api } from "../lib/api";
 import {
   ACCENT_IDS,
   FONT_IDS,
@@ -691,20 +691,9 @@ export function SettingsView() {
             <p className="sectionHint">{t("settings.description")}</p>
           </div>
           <div className={page.facts}>
-            <span className={page.factKey}>{t("settings.version")}</span>
-            <span className={`${page.factValue} tabular`}>{__APP_VERSION__}</span>
             <span className={page.factKey}>{t("settings.license")}</span>
             <span className={page.factValue}>{t("settings.licenseName")}</span>
-            <span className={page.factKey}>{t("settings.mode")}</span>
-            <span className={page.factValue}>
-              <Badge tone={isMock ? "warn" : "quiet"}>
-                {isMock ? t("settings.modeMock") : t("settings.modeTauri")}
-              </Badge>
-            </span>
           </div>
-          {isMock ? (
-            <p className="sectionHint">{t("settings.modeMockHint")}</p>
-          ) : null}
         </section>
 
         {/* Runtime download progress dialog (opened when a runtime layer is

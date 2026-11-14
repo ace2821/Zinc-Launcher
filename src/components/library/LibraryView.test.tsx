@@ -4,27 +4,22 @@ import { LibraryView } from "../../views/LibraryView";
 import { useLibraryStore } from "../../store/library";
 import { setupMockApp, mockApi } from "../../test/harness";
 
-describe("LibraryView hero", () => {
-  it("renders welcome stats and the Recents section", async () => {
+describe("LibraryView grid", () => {
+  it("renders the game grid without hero metadata", async () => {
     await setupMockApp();
     render(<LibraryView />);
 
-    expect(await screen.findByRole("heading", { name: "Your library" })).toBeInTheDocument();
-    expect(screen.getByText("Your games, in one place.")).toBeInTheDocument();
+    // No hero title, no stats, no Recents — just the grid.
+    expect(screen.queryByRole("heading", { name: "Your library" })).toBeNull();
+    expect(screen.queryByText("Your games, in one place.")).toBeNull();
+    expect(screen.queryByText("titles")).toBeNull();
+    expect(screen.queryByText("played")).toBeNull();
+    expect(screen.queryByText("this week")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Recently played" })).toBeNull();
 
-    // Stats are computed from client data only.
-    expect(screen.getByText("13")).toBeInTheDocument();
-    expect(screen.getByText("titles")).toBeInTheDocument();
-    expect(screen.getAllByText(/\d+ h/).length).toBeGreaterThan(0);
-    expect(screen.getByText("played")).toBeInTheDocument();
-    expect(screen.getByText("this week")).toBeInTheDocument();
-
-    // Recents surface games that have been played, from `lastPlayedAt` alone.
-    expect(await screen.findByRole("heading", { name: "Recently played" })).toBeInTheDocument();
+    // Games are still on screen.
     const hollowKnight = await screen.findAllByText("Hollow Knight");
-    // Once in Recents, once on the grid card cover.
-    expect(hollowKnight.length).toBeGreaterThanOrEqual(2);
-    expect(screen.queryByText("Nothing played yet")).toBeNull();
+    expect(hollowKnight.length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows 'Playing now' on a card whose session is active", async () => {

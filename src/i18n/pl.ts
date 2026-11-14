@@ -6,8 +6,7 @@ import type { TranslationShape } from "./en";
  */
 export const pl: TranslationShape = {
   app: {
-    name: "Zinc Launcher",
-    subtitle: "Lokalna biblioteka gier",
+    name: "Zinc",
   },
 
   nav: {
@@ -101,14 +100,6 @@ export const pl: TranslationShape = {
     noResultsTitle: "Brak dopasowań",
     noResultsBody: "Żaden wpis nie pasuje do „{{query}}”.",
     noResultsAction: "Wyczyść wyszukiwanie",
-    showing: "Wyświetlane: {{count}} / {{total}}",
-    heroTitle: "Twoja biblioteka",
-    heroBody: "Twoje gry, w jednym miejscu.",
-    recents: "Ostatnio grane",
-    recentsNone: "Jeszcze nic nie grano",
-    statTitles: "tytuły",
-    statPlaytime: "granego",
-    statWeek: "ten tydzień",
     playingNow: "Gra teraz",
     favoriteAdd: "Dodaj do ulubionych",
     favoriteRemove: "Usuń z ulubionych",
@@ -136,7 +127,7 @@ export const pl: TranslationShape = {
   import: {
     title: "Źródła i import",
     description:
-      "Źródła to foldery, które Zinc Launcher przeszukuje w poszukiwaniu gier. Nic nie trafia do biblioteki, dopóki tego nie zatwierdzisz.",
+      "Źródła to foldery, które Zinc przeszukuje w poszukiwaniu gier. Nic nie trafia do biblioteki, dopóki tego nie zatwierdzisz.",
     sourcesTitle: "Foldery źródłowe",
     sourcesEmptyTitle: "Brak folderu źródłowego",
     sourcesEmpty:
@@ -365,13 +356,8 @@ export const pl: TranslationShape = {
     storageNote:
       "Foldery okładek, zapisów i modów pojawią się razem ze swoimi milestone'ami; dziś w folderze danych leżą library.db i logi.",
     aboutTitle: "O programie",
-    version: "Wersja",
     license: "Licencja",
     mode: "Tryb IPC",
-    modeTauri: "Rdzeń Tauri",
-    modeMock: "Mock (w pamięci)",
-    modeMockHint:
-      "Brak podłączonego rdzenia Rust: wszystko działa na adapterze w pamięci i nic nie trafia na dysk.",
     onboardingTitle: "Kreator konfiguracji",
     onboardingDescription:
       "Język, czcionka interfejsu, akcent, domyślny widok biblioteki oraz zachowanie okna podczas gry. Każdy wybór zapisuje się od razu, więc nie ma czego zatwierdzać.",
@@ -524,7 +510,7 @@ export const pl: TranslationShape = {
     fileDialogTitle: "Wybierz obraz okładki",
     fileFilter: "Obrazy",
     fileNote:
-      "Obraz zostanie skopiowany do folderu Zinc Launcher — wybrany plik zostaje tam, gdzie jest.",
+      "Obraz zostanie skopiowany do folderu Zinc — wybrany plik zostaje tam, gdzie jest.",
     fileFailed: "Nie udało się użyć tego obrazu",
     dialogTitle: "Okładka",
     searchLabel: "Szukaj w sklepie Steam",

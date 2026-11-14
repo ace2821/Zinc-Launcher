@@ -2,7 +2,6 @@ import { ChevronLeft, LayoutGrid, List, Search, Tv, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { GameSort } from "../../lib/filter";
 import { useLibraryStore } from "../../store/library";
-import { useFilteredGames } from "../../store/selectors";
 import { useShellStore } from "../../store/shell";
 import { IconButton } from "../ui/Button";
 import { Segmented } from "../ui/Field";
@@ -29,8 +28,6 @@ export function Header() {
   const goToLibrary = useShellStore((state) => state.goToLibrary);
   const goToBigPictureDashboard = useShellStore((state) => state.goToBigPictureDashboard);
   const currentGame = useLibraryStore((state) => state.currentGame);
-  const total = useLibraryStore((state) => state.games.length);
-  const shown = useFilteredGames().length;
 
   return (
     <header className={styles.header}>
@@ -79,9 +76,6 @@ export function Header() {
           </div>
 
           <div className={styles.headerActions}>
-            <span className={styles.headerCount}>
-              {t("library.showing", { count: shown, total })}
-            </span>
             {/*
              * The way into Big Picture. It sits with the view controls rather
              * than in the sidebar: it is another way to look at the same

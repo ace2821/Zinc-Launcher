@@ -7,8 +7,7 @@
  */
 export const en = {
   app: {
-    name: "Zinc Launcher",
-    subtitle: "Local game library",
+    name: "Zinc",
   },
 
   nav: {
@@ -102,14 +101,6 @@ export const en = {
     noResultsTitle: "Nothing matches",
     noResultsBody: "No entry in the library matches “{{query}}”.",
     noResultsAction: "Clear search",
-    showing: "Shown: {{count}} / {{total}}",
-    heroTitle: "Your library",
-    heroBody: "Your games, in one place.",
-    recents: "Recently played",
-    recentsNone: "Nothing played yet",
-    statTitles: "titles",
-    statPlaytime: "played",
-    statWeek: "this week",
     playingNow: "Playing now",
     favoriteAdd: "Add to favorites",
     favoriteRemove: "Remove from favorites",
@@ -137,7 +128,7 @@ export const en = {
   import: {
     title: "Sources & Import",
     description:
-      "Scan roots are folders Zinc Launcher walks to find game folders. Nothing is added to the library until you approve it.",
+      "Scan roots are folders Zinc walks to find game folders. Nothing is added to the library until you approve it.",
     sourcesTitle: "Scan roots",
     sourcesEmptyTitle: "No scan root yet",
     sourcesEmpty:
@@ -366,13 +357,8 @@ export const en = {
     storageNote:
       "Artwork, saves and mods folders arrive with their milestones; library.db and logs live in the data folder today.",
     aboutTitle: "About",
-    version: "Version",
     license: "License",
     mode: "IPC mode",
-    modeTauri: "Tauri core",
-    modeMock: "Mock (in-memory)",
-    modeMockHint:
-      "No Rust core attached: every action runs against the in-memory adapter and nothing is written to disk.",
     onboardingTitle: "Setup tour",
     onboardingDescription:
       "Language, interface font, accent, default library view and what the window does while a game runs. Every choice persists the moment you make it, so there is nothing to submit.",
@@ -492,7 +478,7 @@ export const en = {
 
     back: "Back",
     next: "Next",
-    finish: "Start using Zinc Launcher",
+    finish: "Start using Zinc",
     skip: "Skip",
     skipHint: "Skip the tour and keep the defaults.",
     footHint: "Your choices are saved as you go.",
@@ -525,7 +511,7 @@ export const en = {
     fileDialogTitle: "Choose a cover image",
     fileFilter: "Images",
     fileNote:
-      "The image is copied into Zinc Launcher's own folder — the file you pick stays where it is.",
+      "The image is copied into Zinc's own folder — the file you pick stays where it is.",
     fileFailed: "Could not use that image",
     dialogTitle: "Cover art",
     searchLabel: "Search the Steam store",

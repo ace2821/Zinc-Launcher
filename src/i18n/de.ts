@@ -3,8 +3,7 @@ import type { TranslationShape } from "./en";
 /** German strings. Typed as `TranslationShape`, so every `en.ts` key is required. */
 export const de: TranslationShape = {
   app: {
-    name: "Zinc Launcher",
-    subtitle: "Lokale Spielebibliothek",
+    name: "Zinc",
   },
 
   nav: {
@@ -98,14 +97,6 @@ export const de: TranslationShape = {
     noResultsTitle: "Keine Treffer",
     noResultsBody: "Kein Eintrag in der Bibliothek passt zu „{{query}}“.",
     noResultsAction: "Suche löschen",
-    showing: "Angezeigt: {{count}} / {{total}}",
-    heroTitle: "Deine Bibliothek",
-    heroBody: "Deine Spiele an einem Ort.",
-    recents: "Zuletzt gespielt",
-    recentsNone: "Noch nichts gespielt",
-    statTitles: "Titel",
-    statPlaytime: "gespielt",
-    statWeek: "diese Woche",
     playingNow: "Läuft jetzt",
     favoriteAdd: "Zu Favoriten hinzufügen",
     favoriteRemove: "Aus Favoriten entfernen",
@@ -133,7 +124,7 @@ export const de: TranslationShape = {
   import: {
     title: "Quellen & Import",
     description:
-      "Scan-Wurzeln sind Ordner, die Zinc Launcher durchsucht, um Spielordner zu finden. Nichts wird zur Bibliothek hinzugefügt, bevor du es genehmigst.",
+      "Scan-Wurzeln sind Ordner, die Zinc durchsucht, um Spielordner zu finden. Nichts wird zur Bibliothek hinzugefügt, bevor du es genehmigst.",
     sourcesTitle: "Scan-Wurzeln",
     sourcesEmptyTitle: "Noch keine Scan-Wurzel",
     sourcesEmpty:
@@ -361,13 +352,8 @@ export const de: TranslationShape = {
     storageNote:
       "Artwork-, Spielstand- und Mods-Ordner kommen mit ihren Meilensteinen; library.db und Logs liegen heute im Datenordner.",
     aboutTitle: "Über",
-    version: "Version",
     license: "Lizenz",
     mode: "IPC-Modus",
-    modeTauri: "Tauri-Kern",
-    modeMock: "Mock (im Speicher)",
-    modeMockHint:
-      "Kein Rust-Kern angehängt: jede Aktion läuft gegen den In-Memory-Adapter und nichts wird auf den Datenträger geschrieben.",
     onboardingTitle: "Einrichtungs-Tour",
     onboardingDescription:
       "Sprache, Schrift der Oberfläche, Akzent, Standard-Bibliotheksansicht und was das Fenster während eines Spiels tut. Jede Wahl wird sofort gespeichert, es gibt also nichts zu bestätigen.",
@@ -486,7 +472,7 @@ export const de: TranslationShape = {
 
     back: "Zurück",
     next: "Weiter",
-    finish: "Zinc Launcher starten",
+    finish: "Zinc starten",
     skip: "Überspringen",
     skipHint: "Tour überspringen und Standardwerte behalten.",
     footHint: "Deine Entscheidungen werden beim Vorangehen gespeichert.",
@@ -519,7 +505,7 @@ export const de: TranslationShape = {
     fileDialogTitle: "Cover-Bild wählen",
     fileFilter: "Bilder",
     fileNote:
-      "Das Bild wird in Zinc Launchers eigenen Ordner kopiert — die gewählte Datei bleibt, wo sie ist.",
+      "Das Bild wird in Zinc eigenen Ordner kopiert — die gewählte Datei bleibt, wo sie ist.",
     fileFailed: "Dieses Bild konnte nicht verwendet werden",
     dialogTitle: "Cover-Art",
     searchLabel: "Im Steam-Shop suchen",

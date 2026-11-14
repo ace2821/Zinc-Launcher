@@ -3,8 +3,7 @@ import type { TranslationShape } from "./en";
 /** Finnish strings. Typed as `TranslationShape`, so every `en.ts` key is required. */
 export const fi: TranslationShape = {
   app: {
-    name: "Zinc Launcher",
-    subtitle: "Paikallinen pelikirjasto",
+    name: "Zinc",
   },
 
   nav: {
@@ -98,14 +97,6 @@ export const fi: TranslationShape = {
     noResultsTitle: "Ei osumia",
     noResultsBody: "Mikään kirjaston kohde ei vastaa hakua ”{{query}}”.",
     noResultsAction: "Tyhjennä haku",
-    showing: "Näytetään: {{count}} / {{total}}",
-    heroTitle: "Kirjastosi",
-    heroBody: "Pelisi yhdessä paikassa.",
-    recents: "Äskettäin pelatut",
-    recentsNone: "Vielä ei pelattu mitään",
-    statTitles: "peliä",
-    statPlaytime: "pelattu",
-    statWeek: "tällä viikolla",
     playingNow: "Pelataan nyt",
     favoriteAdd: "Lisää suosikkeihin",
     favoriteRemove: "Poista suosikeista",
@@ -133,7 +124,7 @@ export const fi: TranslationShape = {
   import: {
     title: "Lähteet ja tuonti",
     description:
-      "Skannausjuuret ovat kansioita, joita Zinc Launcher käy läpi löytääkseen pelikansioita. Mitään ei lisätä kirjastoon ennen hyväksyntääsi.",
+      "Skannausjuuret ovat kansioita, joita Zinc käy läpi löytääkseen pelikansioita. Mitään ei lisätä kirjastoon ennen hyväksyntääsi.",
     sourcesTitle: "Skannausjuuret",
     sourcesEmptyTitle: "Ei vielä skannausjuurta",
     sourcesEmpty:
@@ -361,13 +352,8 @@ export const fi: TranslationShape = {
     storageNote:
       "Kansikuva-, tallennus- ja modikansiot tulevat omien vaiheidensa mukana; library.db ja lokit ovat tänään datakansiossa.",
     aboutTitle: "Tietoja",
-    version: "Versio",
     license: "Lisenssi",
     mode: "IPC-tila",
-    modeTauri: "Tauri-ydin",
-    modeMock: "Mock (muistissa)",
-    modeMockHint:
-      "Rust-ydintä ei ole liitetty: jokainen toiminto suoritetaan muistissa olevalla adapterilla eikä levylle kirjoiteta mitään.",
     onboardingTitle: "Käyttöönotto-kiertue",
     onboardingDescription:
       "Kieli, käyttöliittymän fontti, korostusväri, kirjaston oletusnäkymä ja mitä ikkuna tekee pelin aikana. Jokainen valinta tallennetaan heti, joten mitään ei tarvitse lähettää.",
@@ -486,7 +472,7 @@ export const fi: TranslationShape = {
 
     back: "Takaisin",
     next: "Seuraava",
-    finish: "Aloita Zinc Launcherin käyttö",
+    finish: "Aloita Zincin käyttö",
     skip: "Ohita",
     skipHint: "Ohita kiertue ja pidä oletukset.",
     footHint: "Valintasi tallennetaan sitä mukaa.",
@@ -519,7 +505,7 @@ export const fi: TranslationShape = {
     fileDialogTitle: "Valitse kansikuvatiedosto",
     fileFilter: "Kuvat",
     fileNote:
-      "Kuva kopioidaan Zinc Launcherin omaan kansioon — valitsemasi tiedosto pysyy paikallaan.",
+      "Kuva kopioidaan Zincin omaan kansioon — valitsemasi tiedosto pysyy paikallaan.",
     fileFailed: "Kuvan käyttö epäonnistui",
     dialogTitle: "Kansikuva",
     searchLabel: "Hae Steam-kaupasta",

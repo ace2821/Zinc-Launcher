@@ -3,8 +3,7 @@ import type { TranslationShape } from "./en";
 /** French strings. Typed as `TranslationShape`, so every `en.ts` key is required. */
 export const fr: TranslationShape = {
   app: {
-    name: "Zinc Launcher",
-    subtitle: "Bibliothèque de jeux locale",
+    name: "Zinc",
   },
 
   nav: {
@@ -98,14 +97,6 @@ export const fr: TranslationShape = {
     noResultsTitle: "Aucun résultat",
     noResultsBody: "Aucune entrée de la bibliothèque ne correspond à « {{query}} ».",
     noResultsAction: "Effacer la recherche",
-    showing: "Affichés : {{count}} / {{total}}",
-    heroTitle: "Votre bibliothèque",
-    heroBody: "Vos jeux, au même endroit.",
-    recents: "Joués récemment",
-    recentsNone: "Rien joué pour l'instant",
-    statTitles: "titres",
-    statPlaytime: "joué",
-    statWeek: "cette semaine",
     playingNow: "En cours",
     favoriteAdd: "Ajouter aux favoris",
     favoriteRemove: "Retirer des favoris",
@@ -133,7 +124,7 @@ export const fr: TranslationShape = {
   import: {
     title: "Sources et import",
     description:
-      "Les racines de scan sont les dossiers que Zinc Launcher parcourt pour trouver des dossiers de jeux. Rien n'est ajouté à la bibliothèque avant votre approbation.",
+      "Les racines de scan sont les dossiers que Zinc parcourt pour trouver des dossiers de jeux. Rien n'est ajouté à la bibliothèque avant votre approbation.",
     sourcesTitle: "Racines de scan",
     sourcesEmptyTitle: "Aucune racine de scan",
     sourcesEmpty:
@@ -361,13 +352,8 @@ export const fr: TranslationShape = {
     storageNote:
       "Les dossiers d'illustrations, sauvegardes et mods arrivent avec leurs jalons ; library.db et les journaux vivent aujourd'hui dans le dossier de données.",
     aboutTitle: "À propos",
-    version: "Version",
     license: "Licence",
     mode: "Mode IPC",
-    modeTauri: "Noyau Tauri",
-    modeMock: "Simulé (en mémoire)",
-    modeMockHint:
-      "Aucun noyau Rust attaché : chaque action passe par l'adaptateur en mémoire et rien n'est écrit sur le disque.",
     onboardingTitle: "Visite guidée",
     onboardingDescription:
       "Langue, police de l'interface, accent, vue par défaut de la bibliothèque et comportement de la fenêtre pendant un jeu. Chaque choix est conservé dès que vous le faites, donc rien à valider.",
@@ -486,7 +472,7 @@ export const fr: TranslationShape = {
 
     back: "Retour",
     next: "Suivant",
-    finish: "Commencer avec Zinc Launcher",
+    finish: "Commencer avec Zinc",
     skip: "Passer",
     skipHint: "Passer la visite et garder les valeurs par défaut.",
     footHint: "Vos choix sont enregistrés au fur et à mesure.",
@@ -519,7 +505,7 @@ export const fr: TranslationShape = {
     fileDialogTitle: "Choisir une image de couverture",
     fileFilter: "Images",
     fileNote:
-      "L'image est copiée dans le dossier propre à Zinc Launcher — le fichier choisi reste où il est.",
+      "L'image est copiée dans le dossier propre à Zinc — le fichier choisi reste où il est.",
     fileFailed: "Impossible d'utiliser cette image",
     dialogTitle: "Illustration",
     searchLabel: "Rechercher dans la boutique Steam",

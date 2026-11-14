@@ -1,10 +1,9 @@
 import { FolderInput, Layout, Library, Settings, Timer, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { isMock } from "../../lib/api";
 import { useLibraryStore } from "../../store/library";
 import { useShellStore } from "../../store/shell";
-import { Badge, CountBadge } from "../ui/Badge";
+import { CountBadge } from "../ui/Badge";
 import styles from "./layout.module.css";
 
 interface NavItemProps {
@@ -58,7 +57,6 @@ export function Sidebar() {
         <span className={styles.brandMark} aria-hidden />
         <span className={styles.brandText}>
           <span className={styles.brandName}>{t("app.name")}</span>
-          <span className={styles.brandMeta}>{t("app.subtitle")}</span>
         </span>
       </div>
 
@@ -98,19 +96,6 @@ export function Sidebar() {
           onClick={goToMarketplace}
         />
       </nav>
-
-      <div className={styles.sidebarFoot}>
-        <div className={styles.sidebarFootRow}>
-          <Badge tone={isMock ? "warn" : "quiet"}>
-            {isMock ? t("settings.modeMock") : t("settings.modeTauri")}
-          </Badge>
-        </div>
-        <div className={styles.sidebarFootRow}>
-          <span className={styles.sidebarFootText}>
-            {t("settings.version")} {__APP_VERSION__}
-          </span>
-        </div>
-      </div>
     </aside>
   );
 }

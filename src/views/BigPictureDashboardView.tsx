@@ -207,10 +207,7 @@ export function BigPictureDashboardView() {
         <div className={styles.brand}>
           <span className={styles.brandMark} aria-hidden />
           <div className={styles.brandText}>
-            <span className={styles.brandName}>Zinc Launcher</span>
-            <span className={styles.brandMeta}>
-              {t("bigPicture.dashboard")}
-            </span>
+            <span className={styles.brandName}>Zinc</span>
           </div>
         </div>
 

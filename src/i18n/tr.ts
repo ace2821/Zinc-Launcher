@@ -3,8 +3,7 @@ import type { TranslationShape } from "./en";
 /** Turkish strings. Typed as `TranslationShape`, so every `en.ts` key is required. */
 export const tr: TranslationShape = {
   app: {
-    name: "Zinc Launcher",
-    subtitle: "Yerel oyun kütüphanesi",
+    name: "Zinc",
   },
 
   nav: {
@@ -98,14 +97,6 @@ export const tr: TranslationShape = {
     noResultsTitle: "Eşleşme yok",
     noResultsBody: "Kütüphanedeki hiçbir kayıt “{{query}}” ile eşleşmiyor.",
     noResultsAction: "Aramayı temizle",
-    showing: "Gösterilen: {{count}} / {{total}}",
-    heroTitle: "Kütüphaneniz",
-    heroBody: "Oyunlarınız tek yerde.",
-    recents: "Son oynananlar",
-    recentsNone: "Henüz hiçbir şey oynanmadı",
-    statTitles: "başlık",
-    statPlaytime: "oynandı",
-    statWeek: "bu hafta",
     playingNow: "Şu an oynanıyor",
     favoriteAdd: "Favorilere ekle",
     favoriteRemove: "Favorilerden çıkar",
@@ -133,7 +124,7 @@ export const tr: TranslationShape = {
   import: {
     title: "Kaynaklar ve İçe Aktarma",
     description:
-      "Tarama kökleri, Zinc Launcher'ın oyun klasörlerini bulmak için dolaştığı klasörlerdir. Siz onaylamadan kütüphaneye hiçbir şey eklenmez.",
+      "Tarama kökleri, Zinc'ın oyun klasörlerini bulmak için dolaştığı klasörlerdir. Siz onaylamadan kütüphaneye hiçbir şey eklenmez.",
     sourcesTitle: "Tarama kökleri",
     sourcesEmptyTitle: "Henüz tarama kökü yok",
     sourcesEmpty:
@@ -361,13 +352,8 @@ export const tr: TranslationShape = {
     storageNote:
       "Kapak görseli, kayıt ve mod klasörleri kendi kilometre taşlarıyla gelir; library.db ve günlükler bugün veri klasöründe yaşar.",
     aboutTitle: "Hakkında",
-    version: "Sürüm",
     license: "Lisans",
     mode: "IPC modu",
-    modeTauri: "Tauri çekirdeği",
-    modeMock: "Taklit (bellekte)",
-    modeMockHint:
-      "Rust çekirdeği bağlı değil: her eylem bellekteki bağdaştırıcıya karşı çalışır ve diske hiçbir şey yazılmaz.",
     onboardingTitle: "Kurulum turu",
     onboardingDescription:
       "Dil, arayüz yazı tipi, vurgu rengi, varsayılan kütüphane görünümü ve bir oyun çalışırken pencerenin ne yapacağı. Her seçim yaptığınız anda saklanır, yani gönderilecek bir şey yok.",
@@ -486,7 +472,7 @@ export const tr: TranslationShape = {
 
     back: "Geri",
     next: "İleri",
-    finish: "Zinc Launcher'ı kullanmaya başla",
+    finish: "Zinc'i kullanmaya başla",
     skip: "Atla",
     skipHint: "Turu atla ve varsayılanları koru.",
     footHint: "Seçimleriniz ilerledikçe kaydedilir.",
@@ -519,7 +505,7 @@ export const tr: TranslationShape = {
     fileDialogTitle: "Kapak görseli seç",
     fileFilter: "Görseller",
     fileNote:
-      "Görsel Zinc Launcher'ın kendi klasörüne kopyalanır — seçtiğiniz dosya olduğu yerde kalır.",
+      "Görsel Zinc'ın kendi klasörüne kopyalanır — seçtiğiniz dosya olduğu yerde kalır.",
     fileFailed: "Bu görsel kullanılamadı",
     dialogTitle: "Kapak görseli",
     searchLabel: "Steam mağazasında ara",

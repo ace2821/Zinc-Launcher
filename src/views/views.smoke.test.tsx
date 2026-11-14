@@ -29,7 +29,6 @@ describe("app shell", () => {
     expect(
       (await screen.findAllByText("Hollow Knight")).length,
     ).toBeGreaterThan(0);
-    expect(screen.getByText("Shown: 13 / 13")).toBeInTheDocument();
   });
 
   it("navigates to the pending candidates badge target", async () => {
@@ -261,13 +260,13 @@ describe("SettingsView", () => {
     expect(closeSwitch).toHaveAttribute("aria-checked", "false");
   });
 
-  it("names the storage paths and the IPC mode", async () => {
+  it("names the storage paths and the license", async () => {
     await setupMockApp();
     render(<SettingsView />);
 
     expect(await screen.findByText("~/.config/zinc-launcher/config.toml")).toBeInTheDocument();
     expect(screen.getByText("~/.local/share/zinc-launcher/")).toBeInTheDocument();
-    expect(screen.getByText("Mock (in-memory)")).toBeInTheDocument();
+    expect(screen.getByText("MIT")).toBeInTheDocument();
   });
 
   it("switches the console-mode glyph family and previews it", async () => {

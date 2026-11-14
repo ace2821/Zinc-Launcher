@@ -3,18 +3,15 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { GameGrid } from "../components/library/GameGrid";
 import { GameTable } from "../components/library/GameTable";
-import { Recents } from "../components/library/Recents";
 import styles from "../components/library/library.module.css";
 import { Button } from "../components/ui/Button";
 import { EmptyState, Skeleton } from "../components/ui/Feedback";
 import type { Game } from "../lib/types";
-import { useFormatters } from "../lib/hooks";
 import { useLibraryStore } from "../store/library";
 import { useFilteredGames } from "../store/selectors";
 import { useShellStore } from "../store/shell";
 
 const SKELETON_TILES = 12;
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function LibrarySkeleton() {
   return (
@@ -32,28 +29,8 @@ function LibrarySkeleton() {
   );
 }
 
-function LibraryStat({
-  value,
-  label,
-}: {
-  value: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <div className={styles.stat}>
-      <span className={styles.statValue}>{value}</span>
-      <span className={styles.statLabel}>{label}</span>
-    </div>
-  );
-}
-
-function StatSeparator() {
-  return <span className={styles.statSep} aria-hidden>·</span>;
-}
-
 export function LibraryView() {
   const { t } = useTranslation();
-  const { playtime } = useFormatters();
   const status = useLibraryStore((state) => state.status);
   const games = useLibraryStore((state) => state.games);
   const error = useLibraryStore((state) => state.error);
@@ -71,14 +48,6 @@ export function LibraryView() {
     },
     [openGame],
   );
-
-  const totalSeconds = games.reduce((sum, game) => sum + game.totalSeconds, 0);
-  const totalPlaytime = playtime(totalSeconds);
-  const weekAgo = Date.now() - WEEK_MS;
-  const weekCount = games.filter(
-    (game) =>
-      game.lastPlayedAt !== null && Date.parse(game.lastPlayedAt) >= weekAgo,
-  ).length;
 
   if (games.length === 0 && (status === "idle" || status === "loading")) {
     return <LibrarySkeleton />;
@@ -135,27 +104,7 @@ export function LibraryView() {
 
   return (
     <div className={styles.libraryWrap}>
-      <header className={styles.libraryHero}>
-        <h1 className={styles.heroTitle}>{t("library.heroTitle")}</h1>
-        <p className={styles.heroBody}>{t("library.heroBody")}</p>
-        <div className={styles.statRow}>
-          <LibraryStat value={games.length} label={t("library.statTitles")} />
-          <StatSeparator />
-          <LibraryStat value={totalPlaytime} label={t("library.statPlaytime")} />
-          <StatSeparator />
-          <LibraryStat value={weekCount} label={t("library.statWeek")} />
-        </div>
-      </header>
-
-      <Recents games={games} onOpen={handleOpen} />
-
       <section className={styles.librarySection}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionTitle}>{t("nav.library")}</span>
-          <span className={styles.sectionCount}>
-            {games.length} {t("library.statTitles")} · {totalPlaytime} {t("library.statPlaytime")}
-          </span>
-        </div>
         <div className={styles.gridWrap}>
           {layout === "grid" ? (
             <GameGrid games={filtered} onOpen={handleOpen} />

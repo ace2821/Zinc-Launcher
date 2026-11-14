@@ -121,7 +121,7 @@ describe("OnboardingWizard", () => {
     expect(within(dialog).getByText("List")).toBeInTheDocument();
 
     await user.click(
-      within(dialog).getByRole("button", { name: "Start using Zinc Launcher" }),
+      within(dialog).getByRole("button", { name: "Start using Zinc" }),
     );
 
     await waitFor(() => {
